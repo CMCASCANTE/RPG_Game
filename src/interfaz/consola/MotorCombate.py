@@ -1,3 +1,6 @@
+from .AccionesCombate import AccionesCombate
+
+
 class MotorCombate:
 
     # Creamos el objeto con los jugadores y los enemigos que van a
@@ -16,7 +19,7 @@ class MotorCombate:
             vivos = [e for e in self.enemigos if e.esta_vivo]
 
             # Lanzamos la acción del Jugador que nos devolvera 1 de 2 opciones
-            tipo, valor = self.jugador.seleccionar_accion(vivos)
+            tipo, valor = AccionesCombate.seleccionar_accion(self.jugador, vivos)
 
             # Si la opción elegida es atacar, restamos vida del enemigo que nos
             # devuelve el método .seleccionar_accion

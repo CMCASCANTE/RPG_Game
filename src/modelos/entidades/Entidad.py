@@ -47,9 +47,3 @@ class Entidad(ABC):
         print(
             f"{self.nombre} recibió {daño_final} de daño. Vida restante: {self.vida_actual}/{self.vida_max}"
         )
-
-    # Método abstracto, a definir en las entidades concretas
-    @abstractmethod
-    def seleccionar_accion(self):
-        """Cada entidad decide cómo atacar de forma distinta"""
-        raise NotImplementedError

@@ -5,7 +5,7 @@ from modelos.items.items import (
     PocionCuracionPequenia,
     PocionFuerzaPequenia,
 )
-from modelos.mapas.mapas import MapaInicial
+from interfaz.consola.mapas.MapaInicial import MapaInicial
 
 
 # Creación de ítems iniciales

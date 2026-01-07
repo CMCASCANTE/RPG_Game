@@ -1,6 +1,6 @@
 from .Mapa import Mapa
 from modelos.entidades.entidades import Orco, JefeOrco
-from logica.logica import MotorCombate
+from ..MotorCombate import MotorCombate
 
 
 import random
