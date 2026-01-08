@@ -33,7 +33,7 @@ class MapaInicial(Mapa):
     # en ese cmomento saldrá el boss y si se derrota se podrá continuar al siguiente
     # ¿¿ Una fuente de recuperación de vida como evento ??
 
-    def iniciar_mapa(self):
+    def iniciar_mapa(self) -> bool:
         print(
             "Tras salir de tu aldea en busca de aventuras"
             "\nHas llegado a un pueblo en ruinas que parece deshabitado"
@@ -51,14 +51,16 @@ class MapaInicial(Mapa):
                 input("Pulsa una tecla para continuar...")
             else:
                 print("has muerto, se acabo la partida...")
-                break
+                return False
 
         # Cuando ya no tenemos eventos en la lista
         # lanzamos el evento final
         if self.evento_final():
             print("Has vencido al jefe, enhorabuena!!!")
+            return True
         else:
             print("has muerto, se acabo la partida...")
+            return False
 
     # Evento 1 - Combate
     def evento1(self):

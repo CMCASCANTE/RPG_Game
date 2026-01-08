@@ -42,8 +42,8 @@ class Entidad(ABC):
         # Lógica de mitigación: el daño real es daño - defensa
         # ejegimos el mayor entre la cantidad y 0 para no obtener números negativos
         daño_final = max(0, cantidad - self.defensa_total)
+        # restamos el valor del daño de la vida actual
         self.vida_actual = max(0, self.vida_actual - daño_final)
-        # Indicamos el daño recibido y la vida restante
-        print(
-            f"{self.nombre} recibió {daño_final} de daño. Vida restante: {self.vida_actual}/{self.vida_max}"
-        )
+        # devolvemos la cantidad de daño que se ha hecho
+        # ya que puede variar segun las armas
+        return daño_final

@@ -7,10 +7,11 @@ class PocionFuerzaPequenia(Pocion):
         self,
         nombre="Poción de fuerza pequeña",
         descripcion="Otorga 5 de fuerza permanentes",
+        tipo="fuerza",
     ):
-        super().__init__(nombre, descripcion)
+        super().__init__(nombre, descripcion, tipo)
         self.aumento_fuerza = 5
 
     def usar(self, entidad):
         entidad.fuerza += self.aumento_fuerza
-        print(f"🔥 ¡La fuerza de {entidad.nombre} aumentó en {self.aumento_fuerza}!")
+        return self.aumento_fuerza
