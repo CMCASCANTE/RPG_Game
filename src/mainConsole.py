@@ -1,27 +1,16 @@
 from modelos.entidades.entidades import JugadorGuerrero
-from modelos.items.items import (
-    EspadaOxidada,
-    ArmaduraCuero,
-    PocionCuracionPequenia,
-    PocionFuerzaPequenia,
-)
 from interfaz.consola.mapas.MapaInicial import MapaInicial
 
-
-# Creación de ítems iniciales
-espada_inicial = EspadaOxidada()
-armadura_inicial = ArmaduraCuero()
-pocion_vida = PocionCuracionPequenia()
-pocion_fuerza = PocionFuerzaPequenia()
+import os
 
 # Configuración inicial del jugador
 heroe = JugadorGuerrero("Link")
-heroe.equipar(espada_inicial)
-heroe.equipar(armadura_inicial)
-heroe.inventario.extend([pocion_vida, pocion_fuerza])
+
 
 # Bucle de Menú principal
 while True:
+    # Limpiamos la pantalla
+    os.system("clear")
     print("############################")
     print("## Bienvenido al RPG GAME ##")
     print("############################")
@@ -40,6 +29,7 @@ while True:
         # Cargamos el mapa inicial
         if mapa.iniciar_mapa():
             print("Enhora buena!! Has finalizado el mapa inicial")
+            input("\nPulsa una tecla para continuar...")
         else:
             break
 

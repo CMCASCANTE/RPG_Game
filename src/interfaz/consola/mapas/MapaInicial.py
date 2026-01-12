@@ -34,21 +34,22 @@ class MapaInicial(Mapa):
     # ¿¿ Una fuente de recuperación de vida como evento ??
 
     def iniciar_mapa(self) -> bool:
+        self.limpiar_pantalla()
         print(
             "Tras salir de tu aldea en busca de aventuras"
             "\nHas llegado a un pueblo en ruinas que parece deshabitado"
             "\nComienzas a explorarlo... "
         )
-        input("Pulsa una tecla para continuar...")
+        input("\nPulsa una tecla para continuar...")
         # lanzamos un random que elija un evento
         eventos = [self.evento1, self.evento2]
-
         # Vamos lanzando los eventos mientas haya en la lista
         while eventos:
             evento = eventos.pop(random.randrange(len(eventos)))
             if evento():
                 print("Sigues recorriendo el pueblo")
                 input("Pulsa una tecla para continuar...")
+
             else:
                 print("has muerto, se acabo la partida...")
                 return False
@@ -57,15 +58,17 @@ class MapaInicial(Mapa):
         # lanzamos el evento final
         if self.evento_final():
             print("Has vencido al jefe, enhorabuena!!!")
+            input("\nPulsa una tecla para continuar...")
             return True
         else:
             print("has muerto, se acabo la partida...")
+            input("\nPulsa una tecla para continuar...")
             return False
 
     # Evento 1 - Combate
     def evento1(self):
-        self.limpiar_pantalla()
         print("Mientras recorrias el pueblo te han atacado!")
+        input("\nPulsa una tecla para continuar...")
         lista_enemigos = [Orco(), Orco(), Orco()]
 
         # Ejecución
@@ -73,11 +76,11 @@ class MapaInicial(Mapa):
         return partida.iniciar_batalla()
 
     def evento2(self):
-        self.limpiar_pantalla()
         print(
             "Oyes voces desde dentro de una casa, te acercas despacio..."
             "\nNada mas entrar por la puerta te asaltan unos Orcos!!"
         )
+        input("\nPulsa una tecla para continuar...")
         lista_enemigos = [Orco(), Orco()]
 
         # Ejecución
@@ -85,7 +88,6 @@ class MapaInicial(Mapa):
         return partida.iniciar_batalla()
 
     def evento_final(self):
-        self.limpiar_pantalla()
         print(
             "Tras deshacerte de los Orcos que quedaban en el pueblo"
             "\nOyes unos pasos que se acercan"
@@ -93,6 +95,7 @@ class MapaInicial(Mapa):
             "\nTras un callejon aparece el jefe de los Orcos!!!"
             "\nEsta va a ser una batalla dificil..."
         )
+        input("\nPulsa una tecla para continuar...")
         combateFinal = [JefeOrco()]
         # Ejecución
         partida = MotorCombate(self.jugador, combateFinal)

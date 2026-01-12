@@ -5,5 +5,6 @@ from .armas.GarroteGigante import GarroteGigante
 from .armaduras.Armadura import Armadura
 from .armaduras.ArmaduraPieles import ArmaduraPieles
 from .armaduras.ArmaduraCuero import ArmaduraCuero
+from .pociones.Pocion import Pocion
 from .pociones.PocionCuracionPequenia import PocionCuracionPequenia
 from .pociones.PocionFuerzaPequenia import PocionFuerzaPequenia
