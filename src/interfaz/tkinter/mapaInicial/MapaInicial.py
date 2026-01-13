@@ -125,15 +125,12 @@ class MapaInicial(ctk.CTkFrame):
 
     def escribir_en_log(self, texto, opciones=None):
         self.log_texto.configure(state="normal")
+        self.log_texto.delete("1.0", "end")  # LIMPIA TODA LA PANTALLA
 
-        # Añadimos un separador visual para que el jugador sepa que es un nuevo evento
-        self.log_texto.insert("end", "\n" + "-" * 30 + "\n")
-
-        # Insertamos el bloque que viene del motor (Daño + HUD)
         self.log_texto.insert("end", texto)
 
         if opciones:
-            self.log_texto.insert("end", "\n")
+            self.log_texto.insert("end", "\n\n")
             for nombre_visible, id_destino in opciones.items():
                 tag_name = f"click_{id_destino}"
                 self.log_texto.insert(
@@ -146,7 +143,6 @@ class MapaInicial(ctk.CTkFrame):
                 )
 
         self.log_texto.configure(state="disabled")
-        self.log_texto.see("end")  # Esto hace scroll automático hacia abajo
 
     # Dentro de las opciones si lanzamos un combate el
     # motor de combate (InterfazCombate) tomara el control

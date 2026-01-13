@@ -30,53 +30,35 @@ class InterfazCombate:
         self.mostrar_estado_actual("¡EL COMBATE COMIENZA!")
 
     def mostrar_estado_actual(self, prefacio="", mostrar_opciones=True):
-        """
-        Renderiza toda la información en el log de texto.
-        :param prefacio: Texto descriptivo de lo que acaba de ocurrir.
-        :param mostrar_opciones: Si es False, oculta los botones para evitar clics durante animaciones.
-        """
-        # Filtramos quién sigue en pie
         vivos = [e for e in self.enemigos if e.esta_vivo]
 
-        # Si no hay enemigos vivos, el motor termina
         if not vivos:
             self.finalizar_victoria()
             return
 
-        # --- CONSTRUCCIÓN DEL HUD (BARRAS DE VIDA) ---
-        hud = "\n" + "=" * 40 + "\n"
-        # 1. Listamos enemigos
-        for en in self.enemigos:
-            barra = self.generar_barra(en.vida_actual, en.vida_max)
-            status = "VIVO" if en.esta_vivo else "CAÍDO"
-            # :<15 alinea el nombre a la izquierda con 15 caracteres de espacio
-            if en.esta_vivo:
-                hud += f" ENEMIGO: {en.nombre:<15} {barra} {en.vida_actual}/{en.vida_max} HP\n"
-
-        hud += "-" * 40 + "\n"
-
-        # 2. Añadimos la barra del Jugador (HUD PROPIO)
+        # El cuerpo del mensaje solo mostrará el "prefacio" (el daño que acaba de ocurrir)
+        # y la barra del jugador para tenerla siempre a la vista
         barra_jug = self.generar_barra(
-            self.jugador.vida_actual, self.jugador.vida_max, ancho=20
+            self.jugador.vida_actual, self.jugador.vida_max, ancho=15
         )
-        hud += f" TÚ:   {'JUGADOR':<15} {barra_jug} {self.jugador.vida_actual}/{self.jugador.vida_max} HP\n"
-        hud += "=" * 40 + "\n"
+        hud_jugador = f"TU ESTADO: {barra_jug} {self.jugador.vida_actual}/{self.jugador.vida_max} HP\n"
 
-        texto_final = f"{prefacio}\n{hud}"
+        texto_final = f"{prefacio}"
 
-        # --- GENERACIÓN DE OPCIONES CLICABLES ---
         opciones = {}
         if mostrar_opciones:
-            texto_final += "\n¿A quién quieres atacar?"
             for i, en in enumerate(vivos):
-                # Usamos id(en) para vincular el clic a la instancia exacta del objeto
-                opciones[f"{i+ 1} - Atacar a {en.nombre}"] = f"MC_ATAQUE_{id(en)}"
+                # CREAMOS LA BARRA PARA LA OPCIÓN
+                barra_en = self.generar_barra(en.vida_actual, en.vida_max, ancho=8)
+                # El texto del "botón" ahora incluye la vida del enemigo
+                # Opcional - mantener el nombre en 12 caracteres para que todo se muestre homogeneo
+                # label = f"{i} - Atacar a {en.nombre:<12} {barra_en} {en.vida_actual} HP"
+                label = f"{i} - Atacar a {en.nombre} {barra_en} {en.vida_actual} HP"
+                opciones[label] = f"MC_ATAQUE_{id(en)}"
+
             opciones["Intentar escapar"] = "MC_ESCAPE"
+            texto_final = f"{prefacio}\n\n{hud_jugador}"
 
-        # IMPORTANTE: El prefacio DEBE ir primero en la cadena de texto
-        texto_final = f"{prefacio}\n{hud}"
-
-        # Enviamos todo al log de la interfaz principal
         self.interfaz.escribir_en_log(texto_final, opciones)
 
     def manejar_clic(self, id_destino):
@@ -94,49 +76,47 @@ class InterfazCombate:
             return True
         return False
 
+    def finalizar_victoria(self):
+        """Cierre del combate y limpieza."""
+        # Evitamos que se ejecute dos veces si por error se llama desde varios sitios
+        if self.interfaz.combate_activo is None:
+            return
+
+        self.interfaz.escribir_en_log("¡VICTORIA! El combate ha terminado.")
+        self.interfaz.combate_activo = (
+            None  # Muy importante ponerlo a None antes de cargar escena
+        )
+
+        # Volvemos a la narrativa
+        self.interfaz.cargar_escena(self.escena_retorno)
+
     def ejecutar_turno_ataque(self, obj_id_str):
-        """Fase 1 del turno: El jugador golpea."""
         objetivo = next((e for e in self.enemigos if str(id(e)) == obj_id_str), None)
         if not objetivo:
             return
 
-        # Capturamos el daño exacto devuelto por la lógica del objeto
+        # 1. Jugador ataca
         dano_j = objetivo.recibir_daño(self.jugador.daño_total)
+        log_j = f"--- TU TURNO ---\n\nGolpeas a {objetivo.nombre} causando {dano_j} de daño."
 
-        # Construimos un mensaje detallado
-        log_jugador = (
-            f"--- [ TURNO DEL JUGADOR ] ---\n"
-            f"» Atacas a {objetivo.nombre}.\n"
-            f"» ¡Le has infligido {dano_j} puntos de daño!"
-        )
+        # Mostramos el daño del jugador y QUITAMOS las opciones para que no pueda clicar
+        self.mostrar_estado_actual(prefacio=log_j, mostrar_opciones=False)
 
-        if not objetivo.esta_vivo:
-            log_jugador += f"\n» ¡{objetivo.nombre} ha sido derrotado!"
-
-        # Actualizamos la pantalla con el mensaje (prefacio)
-        self.mostrar_estado_actual(prefacio=log_jugador, mostrar_opciones=False)
-
-        # Retraso para el contraataque
-        self.interfaz.after(1200, self.procesar_contraataque)
+        # 2. Programamos el contraataque
+        self.interfaz.after(1500, self.procesar_contraataque)
 
     def procesar_contraataque(self):
-        """Fase 2 del turno: Los enemigos responden."""
-        log_enemigos = "--- [ TURNO ENEMIGO ] ---\n"
-        hay_enemigos_vivos = False
-
+        log_e = "--- TURNO ENEMIGO ---\n\n"
         for en in self.enemigos:
             if en.esta_vivo:
-                hay_enemigos_vivos = True
-                # El jugador recibe el daño y guardamos la cifra
-                dano_recibido = self.jugador.recibir_daño(en.daño_total)
-                log_enemigos += f"» {en.nombre} te golpea: -{dano_recibido} HP.\n"
+                dano_e = self.jugador.recibir_daño(en.daño_total)
+                log_e += f"» {en.nombre} te inflige {dano_e} de daño.\n"
 
-        if not hay_enemigos_vivos:
-            log_enemigos = "No quedan enemigos en pie para contraatacar."
+        # Mostramos el daño de los enemigos (todavía sin opciones)
+        self.mostrar_estado_actual(prefacio=log_e, mostrar_opciones=False)
 
-        # Comprobación de salud del jugador (opcional)
-        if self.jugador.vida_actual <= 0:
-            log_enemigos += "\n¡HAS CAÍDO EN COMBATE!"
-
-        # Mostramos el resultado final del turno y devolvemos los botones
-        self.mostrar_estado_actual(prefacio=log_enemigos, mostrar_opciones=True)
+        # 3. Tras otros 1.5 segundos, devolvemos el menú de ataque
+        # Esto permite que el jugador lea el daño recibido antes de que salgan los botones
+        self.interfaz.after(
+            1500, lambda: self.mostrar_estado_actual(prefacio="¿Qué harás ahora?")
+        )
