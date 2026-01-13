@@ -16,7 +16,7 @@ class RayoHielo(Habilidad):
         self.daño = daño
 
     def usar(self, entities: list[Entidad]):
-        daño_total = 0
-        for entity in entities:
-            daño_total += entity.recibir_daño(self.daño, self.tipo)
-        return daño_total
+        daño_total = {}
+        for i, entity in enumerate(entities):
+            daño_total.update({i: {entity: entity.recibir_daño(self.daño, self.tipo)}})
+        return {"tipo": "ataque", "afectacion": "area", "efectos": daño_total}

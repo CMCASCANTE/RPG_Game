@@ -18,12 +18,6 @@ class JugadorGuerrero(Jugador):
             PocionFuerzaPequenia,
         )
 
-        # Creación de ítems iniciales
-        espada_inicial = EspadaOxidada()
-        armadura_inicial = ArmaduraCuero()
-        pocion_vida = PocionCuracionPequenia()
-        pocion_fuerza = PocionFuerzaPequenia()
-
         self.equipar(EspadaOxidada())
         self.equipar(ArmaduraCuero())
         self.obtenerItem(PocionCuracionPequenia())

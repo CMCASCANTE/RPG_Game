@@ -77,12 +77,25 @@ class MotorCombate:
                             input("Elige una habilidad (o ninguna para volver atrás): ")
                         )
                         skill = self.jugador.habilidades[skill_idx - 1]
-                        daño_causado = self.jugador.usar_habilidad(skill, vivos)
-                        if daño_causado >= 0:
+                        # Lanzamos la habilidad y guardamos el resultado
+                        # que es un dict con diferentes valores
+                        datos_habilidad = self.jugador.usar_habilidad(skill, vivos)
+                        # Si nos ha devuelto algo es que se ha podido usar
+                        if datos_habilidad:
                             # Limpiamos la consola tras elegir la habilidad (por claridad de la interfaz)
                             os.system("clear")
-                            print(f"{skill.descripcion_uso}")
-                            print(f"En total ha causado {daño_causado} de daño")
+                            # Mostramos la descripción de la habilidad
+                            print(skill.descripcion_uso)
+                            # Guardamos el valor de "efectos", que es un dict
+                            # con las entidades a las que ha afectado y los daños recibidos
+                            danios = datos_habilidad["efectos"].values()
+                            # Describimos los daños recibidos por cada entidad
+                            for elm in danios:
+                                data = list(elm.items())[0]
+                                print(
+                                    f"\n{data[0].nombre} recibió {data[1]} de daño. Vida restante: {data[0].vida_actual}/{data[0].vida_max}"
+                                )
+                        # Si no ha devuelto nada (None) es por que no habia esencia para lanzarla
                         else:
                             print(
                                 f"No tienes esencia suficiente para usar {skill.nombre}"
@@ -91,10 +104,6 @@ class MotorCombate:
                             continue
                     except:
                         continue
-
-                    ########################################
-
-                    ############################################
 
                 # Opcion 3 - Inventario
                 # Menu para la selección de items
@@ -115,16 +124,11 @@ class MotorCombate:
                         # Limpiamos la consola tras elegir la habilidad (por claridad de la interfaz)
                         os.system("clear")
                         item = self.jugador.inventario.pop(item_idx - 1)
-                        if item.tipo == "curacion":
-                            # Si no da error (como por ejemplo que el número exceda el indice)
-                            # Sacamos el item del inventario con pop y lo usamos
-                            print(
-                                f"✨ {self.jugador.nombre} recuperó {item.usar(self.jugador)} HP."
-                            )
-                        if item.tipo == "fuerza":
-                            print(
-                                f"🔥 ¡La fuerza de {self.jugador.nombre} aumentó en {item.usar(self.jugador)}!"
-                            )
+                        # Usamos el item y guardamos los resultados
+                        datos_item = item.usar(self.jugador)
+                        print(
+                            f"✨ {self.jugador.nombre} ha usado un item de {datos_item["tipo"]} obteniendo {datos_item["cantidad"]} de {datos_item["atributo"]}"
+                        )
                         input("\nPulsa una tecla para volver al menú...")
                         break
                     except:
