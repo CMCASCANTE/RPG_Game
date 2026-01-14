@@ -159,6 +159,8 @@ class MapaInicial(ctk.CTkFrame):
             # Ahora self.id_escena_actual ya tendrá valor
             escena_data = self.datos_historia.get(self.id_escena_actual)
             enemigos = escena_data.get("enemigos", [])
+            siguiente_escena = escena_data.get("siguiente_escena")
+            escena_retorno = escena_data.get("escena_retorno")
 
             """Crea el motor y le cede el control"""
             from .InterfazCombate import InterfazCombate
@@ -167,7 +169,8 @@ class MapaInicial(ctk.CTkFrame):
                 interfaz=self,
                 jugador=self.jugador,
                 enemigos=enemigos,
-                escena_retorno="inicio_cueva",  # A donde vuelve al ganar
+                escena_retorno=escena_retorno,  # A donde vuelve al huir
+                siguiente_escena=siguiente_escena,  # A donde vuelve al ganar
             )
             self.combate_activo.iniciar()
             return

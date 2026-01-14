@@ -13,10 +13,12 @@ def obtener_historia(ruta_assets):
             "imagen": os.path.join(ruta_assets, "entrada_cueva.png"),
             "opciones": {
                 "Atacar a los Goblins": "TRIGGER_COMBATE",  # ID especial
-                "Huir": "menu_principal",
+                "Huir": "inicio_cueva",
             },
             # Definimos aquí quiénes aparecen si se inicia un combate en esta escena
             "enemigos": [Orco(), Orco(), Orco()],
+            "siguiente_escena": "dentro_cueva",
+            "escena_retorno": "inicio_cueva",
         },
         "inicio_cueva": {
             "texto": "Estás ante una cueva que emana un aire gélido. El silencio es absoluto y la entrada parece una boca hambrienta.",
